@@ -1,0 +1,402 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DB_URL")
+}
+
+model AllAuthRecipeUsers {
+  user_id        String          @id @db.Char(36)
+  recipe_id      String          @db.VarChar(128)
+  time_joined    BigInt          @db.UnsignedBigInt
+  userid_mapping UseridMapping?
+
+  @@index([time_joined, user_id], map: "all_auth_recipe_users_pagination_index")
+  @@map("all_auth_recipe_users")
+}
+
+model DashboardUserSessions {
+  session_id      String          @id @db.Char(36)
+  user_id         String          @db.Char(36)
+  time_created    BigInt          @db.UnsignedBigInt
+  expiry          BigInt          @db.UnsignedBigInt
+  dashboard_users DashboardUsers @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Restrict, map: "dashboard_user_sessions_ibfk_1")
+
+  @@index([expiry], map: "dashboard_user_sessions_expiry_index")
+  @@index([user_id], map: "user_id")
+  @@map("dashboard_user_sessions")
+}
+
+model DashboardUsers {
+  user_id                 String                    @id @db.Char(36)
+  email                   String                    @unique(map: "email") @db.VarChar(256)
+  password_hash           String                    @db.VarChar(256)
+  time_joined             BigInt                    @db.UnsignedBigInt
+  dashboard_user_sessions DashboardUserSessions[]
+
+  @@map("dashboard_users")
+}
+
+model EmailVerificationTokens {
+  user_id      String @db.VarChar(128)
+  email        String @db.VarChar(256)
+  token        String @unique(map: "token") @db.VarChar(128)
+  token_expiry BigInt @db.UnsignedBigInt
+
+  @@id([user_id, email, token])
+  @@index([token_expiry], map: "emailverification_tokens_index")
+  @@map("emailverification_tokens")
+}
+
+model EmailVerificationVerifiedEmails {
+  user_id String @db.VarChar(128)
+  email   String @db.VarChar(256)
+
+  @@id([user_id, email])
+  @@map("emailverification_verified_emails")
+}
+
+model JWTSigningKeys {
+  key_id     String  @id @db.VarChar(255)
+  key_string String  @db.Text
+  algorithm  String  @db.VarChar(10)
+  created_at BigInt? @db.UnsignedBigInt
+
+  @@map("jwt_signing_keys")
+}
+
+model KeyValue {
+  name            String  @id @db.VarChar(128)
+  value           String? @db.Text
+  created_at_time BigInt? @db.UnsignedBigInt
+
+  @@map("key_value")
+}
+
+model PasswordResets {
+  user_id      String @db.Char(36)
+  token        String @unique(map: "token") @db.VarChar(128)
+  token_expiry BigInt @db.UnsignedBigInt
+  users        Users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "password_resets_ibfk_1")
+
+  @@id([user_id, token])
+  @@index([token_expiry], map: "emailpassword_password_reset_token_expiry_index")
+  @@map("password_resets")
+}
+
+model PasswordlessCodes {
+  code_id              String               @id @db.Char(36)
+  device_id_hash       String               @db.Char(44)
+  link_code_hash       String               @unique(map: "link_code_hash") @db.Char(44)
+  created_at           BigInt               @db.UnsignedBigInt
+  passwordless_devices PasswordlessDevices @relation(fields: [device_id_hash], references: [device_id_hash], onDelete: Cascade, map: "passwordless_codes_ibfk_1")
+
+  @@index([device_id_hash], map: "device_id_hash")
+  @@index([created_at], map: "passwordless_codes_created_at_index")
+  @@map("passwordless_codes")
+}
+
+model PasswordlessDevices {
+  device_id_hash     String               @id @db.Char(44)
+  email              String?              @db.VarChar(256)
+  phone_number       String?              @db.VarChar(256)
+  link_code_salt     String               @db.Char(44)
+  failed_attempts    Int                  @db.UnsignedInt
+  passwordless_codes PasswordlessCodes[]
+
+  @@index([email], map: "passwordless_devices_email_index")
+  @@index([phone_number], map: "passwordless_devices_phone_number_index")
+  @@map("passwordless_devices")
+}
+
+model PasswordlessUsers {
+  user_id      String  @id @db.Char(36)
+  email        String? @unique(map: "email") @db.VarChar(256)
+  phone_number String? @unique(map: "phone_number") @db.VarChar(256)
+  time_joined  BigInt  @db.UnsignedBigInt
+
+  @@map("passwordless_users")
+}
+
+model RolePermissions {
+  role       String @db.VarChar(255)
+  permission String @db.VarChar(255)
+  roles      Roles  @relation(fields: [role], references: [role], onDelete: Cascade, onUpdate: Restrict, map: "role_permissions_ibfk_1")
+
+  @@id([role, permission])
+  @@index([permission], map: "role_permissions_permission_index")
+  @@map("role_permissions")
+}
+
+model Roles {
+  role             String             @id @db.VarChar(255)
+  role_permissions RolePermissions[]
+  user_roles       UserRoles[]
+
+  @@map("roles")
+}
+
+model SessionAccessTokenSigningKeys {
+  created_at_time BigInt  @id @db.UnsignedBigInt
+  value           String? @db.Text
+
+  @@map("session_access_token_signing_keys")
+}
+
+model SessionInfo {
+  session_handle       String  @id @db.VarChar(255)
+  user_id              String  @db.VarChar(128)
+  refresh_token_hash_2 String  @db.VarChar(128)
+  session_data         String? @db.Text
+  expires_at           BigInt  @db.UnsignedBigInt
+  created_at_time      BigInt  @db.UnsignedBigInt
+  jwt_user_payload     String? @db.Text
+
+  @@map("session_info")
+}
+
+model ThirdPartyUsers {
+  third_party_id      String @db.VarChar(28)
+  third_party_user_id String @db.VarChar(256)
+  user_id             String @unique(map: "user_id") @db.Char(36)
+  email               String @db.VarChar(256)
+  time_joined         BigInt @db.UnsignedBigInt
+
+  @@id([third_party_id, third_party_user_id])
+  @@map("thirdparty_users")
+}
+
+model TOTPUsedCodes {
+  user_id         String     @db.VarChar(128)
+  code            String     @db.VarChar(8)
+  is_valid        Boolean
+  expiry_time_ms  BigInt     @db.UnsignedBigInt
+  created_time_ms BigInt     @db.UnsignedBigInt
+  totp_users      TOTPUsers @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Restrict, map: "totp_used_codes_ibfk_1")
+
+  @@id([user_id, created_time_ms])
+  @@index([expiry_time_ms], map: "totp_used_codes_expiry_time_ms_index")
+  @@map("totp_used_codes")
+}
+
+model TOTPUserDevices {
+  user_id     String     @db.VarChar(128)
+  device_name String     @db.VarChar(256)
+  secret_key  String     @db.VarChar(256)
+  period      Int
+  skew        Int
+  verified    Boolean
+  totp_users  TOTPUsers @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Restrict, map: "totp_user_devices_ibfk_1")
+
+  @@id([user_id, device_name])
+  @@map("totp_user_devices")
+}
+
+model TOTPUsers {
+  user_id           String              @id @db.VarChar(128)
+  totp_used_codes   TOTPUsedCodes[]
+  totp_user_devices TOTPUserDevices[]
+
+  @@map("totp_users")
+}
+
+model UserLastActive {
+  user_id          String  @id @db.VarChar(128)
+  last_active_time BigInt? @db.UnsignedBigInt
+
+  @@map("user_last_active")
+}
+
+model UserMetadata {
+  user_id       String @id @db.VarChar(128)
+  user_metadata String @db.Text
+
+  @@map("user_metadata")
+}
+
+model UserRoles {
+  user_id String @db.VarChar(128)
+  role    String @db.VarChar(255)
+  roles   Roles  @relation(fields: [role], references: [role], onDelete: Cascade, onUpdate: Restrict, map: "user_roles_ibfk_1")
+
+  @@id([user_id, role])
+  @@index([role], map: "user_roles_role_index")
+  @@map("user_roles")
+}
+
+model UseridMapping {
+  supertokens_user_id   String                @unique(map: "supertokens_user_id") @db.Char(36)
+  external_user_id      String                @unique(map: "external_user_id") @db.VarChar(128)
+  external_user_id_info String?               @db.Text
+  all_auth_recipe_users AllAuthRecipeUsers @relation(fields: [supertokens_user_id], references: [user_id], onDelete: Cascade, onUpdate: Restrict, map: "userid_mapping_ibfk_1")
+
+  @@id([supertokens_user_id, external_user_id])
+  @@map("userid_mapping")
+}
+
+model Users {
+  user_id         String            @id @db.Char(36)
+  email           String            @unique(map: "email") @db.VarChar(256)
+  password_hash   String            @db.VarChar(256)
+  first_name      String?           @db.VarChar(64)
+  last_name       String?           @db.VarChar(64)
+  phone_number    String?           @db.VarChar(20)
+  user_type       UserType
+  tenant          Tenant?
+  owner           Owner?
+  time_joined     BigInt            @db.UnsignedBigInt
+  password_resets PasswordResets[]
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+
+  @@map("users")
+}
+
+model Tenant {
+  tenant_id       String    @id @db.Char(36)
+  user_id         String    @unique @db.Char(36)
+  profile_picture String?   @db.VarChar(256)
+  booking         Booking[]
+
+  user Users @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Restrict, map: "tenant_ibfk_1")
+  @@map("tenant")
+}
+
+model Owner {
+  owner_id        String            @id @db.Char(36)
+  user_id         String            @unique @db.Char(36)
+  nik             String?           @db.VarChar(16)
+  ktp_picture     String?           @db.VarChar(256)
+  balance         Decimal           @db.Decimal(10, 2)
+  bank_name       String?           @db.VarChar(36)
+  card_number     String?           @db.VarChar(20)
+  status          OwnerStatus      @default(PENDING)
+  coworking_space CoworkingSpace[]
+
+  user Users @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Restrict, map: "owner_ibfk_1")
+  @@map("owner")
+}
+
+model CoworkingSpace {
+  space_id                 String                     @id @db.Char(36)
+  name                     String                     @db.VarChar(64)
+  description              String?                    @db.Text
+  price                    Decimal                    @db.Decimal(10, 2)
+  capacity                 Int
+  owner_id                 String                     @db.Char(36)
+  location_id              Location?
+  availability             Availability[]
+  coworking_space_image    CoworkingSpaceImage[]
+  coworking_space_facility CoworkingSpaceFacility[]
+  booking                  Booking[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  owner Owner @relation(fields: [owner_id], references: [owner_id], onDelete: Cascade, onUpdate: Restrict, map: "coworking_space_ibfk_1")
+  @@map("coworking_space")
+}
+
+model CoworkingSpaceImage {
+  image_id  String @id @db.Char(36)
+  space_id  String @db.Char(36)
+  image_url String @db.VarChar(256)
+
+  coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Restrict, map: "coworking_space_image_ibfk_1")
+  @@map("coworking_space_image")
+}
+
+model Location {
+  location_id String  @id @db.Char(36)
+  address     String? @db.VarChar(256)
+  latitude    Float
+  longitude   Float
+  space_id    String  @unique @db.Char(36)
+
+  coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Restrict, map: "location_ibfk_1")
+  @@map("location")
+}
+
+model Availability {
+  availability_id String   @id @db.Char(36)
+  space_id        String   @db.Char(36)
+  date            DateTime @db.Date
+  start_hour      Int
+  end_hour        Int
+  is_booked       Boolean  @default(false)
+
+  coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Restrict, map: "availability_ibfk_1")
+  @@map("availability")
+}
+
+model Facility {
+  facility_id String @id @db.Char(36)
+  name        String @db.VarChar(64)
+  description String @db.Text
+
+  coworking_space_facility CoworkingSpaceFacility[]
+  @@map("facility")
+}
+
+model CoworkingSpaceFacility {
+  space_id        String          @db.Char(36)
+  facility_id     String          @db.Char(36)
+  facility        Facility        @relation(fields: [facility_id], references: [facility_id], onDelete: Cascade, onUpdate: Restrict, map: "coworking_space_facility_ibfk_2")
+  coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Restrict, map: "coworking_space_facility_ibfk_1")
+
+  @@id([space_id, facility_id])
+  @@map("coworking_space_facility")
+}
+
+model Booking {
+  booking_id  String   @id @db.Char(36)
+  space_id    String   @db.Char(36)
+  tenant_id   String   @db.Char(36)
+  payment     Payment?
+  date        DateTime @db.Date
+  start_hour  Int
+  end_hour    Int
+  total_price Decimal  @db.Decimal(10, 2)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Restrict, map: "booking_ibfk_1")
+  tenant          Tenant          @relation(fields: [tenant_id], references: [tenant_id], onDelete: Cascade, onUpdate: Restrict, map: "booking_ibfk_2")
+
+  @@index([space_id], map: "booking_space_id_index")
+  @@index([tenant_id], map: "booking_tenant_id_index")
+  @@map("booking")
+}
+
+model Payment {
+  payment_id String         @id @db.Char(36)
+  booking_id String         @unique @db.Char(36)
+  amount     Decimal        @db.Decimal(10, 2)
+  status     PaymentStatus @default(PENDING)
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
+
+  booking Booking @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade, onUpdate: Restrict, map: "payment_ibfk_1")
+  @@map("payment")
+}
+
+enum UserType {
+  TENANT
+  OWNER
+  ADMIN
+}
+
+enum OwnerStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
