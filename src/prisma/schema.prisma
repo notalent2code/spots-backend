@@ -13,7 +13,8 @@ model Users {
   password_hash String   @db.VarChar(256)
   first_name    String   @db.VarChar(64)
   last_name     String   @db.VarChar(64)
-  phone_number  String   @db.VarChar(20) @unique
+  phone_number  String   @unique @db.VarChar(20)
+  refresh_token String?  @db.Text
   user_type     UserType
   tenant        Tenant?
   owner         Owner?
@@ -27,7 +28,7 @@ model Tenant {
   tenant_id       Int       @id @default(autoincrement())
   user_id         Int       @unique
   profile_picture String?   @db.VarChar(256)
-  booking         Booking[]
+  bookings        Booking[]
 
   user Users @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "tenant_ibfk_1")
 
@@ -35,15 +36,15 @@ model Tenant {
 }
 
 model Owner {
-  owner_id        Int              @id @default(autoincrement())
-  user_id         Int              @unique
-  nik             String?          @db.VarChar(16)
-  ktp_picture     String?          @db.VarChar(256)
-  balance         Decimal          @default(0) @db.Decimal(10, 2)
-  bank_name       String?          @db.VarChar(36)
-  card_number     String?          @db.VarChar(20)
-  status          OwnerStatus      @default(PENDING)
-  coworking_space CoworkingSpace[]
+  owner_id         Int              @id @default(autoincrement())
+  user_id          Int              @unique
+  nik              String?          @db.VarChar(16)
+  ktp_picture      String?          @db.VarChar(256)
+  balance          Decimal          @default(0) @db.Decimal(10, 2)
+  bank_name        String?          @db.VarChar(36)
+  card_number      String?          @db.VarChar(20)
+  status           OwnerStatus      @default(PENDING)
+  coworking_spaces CoworkingSpace[]
 
   user Users @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "owner_ibfk_1")
 
@@ -51,17 +52,17 @@ model Owner {
 }
 
 model CoworkingSpace {
-  space_id                 Int                      @id @default(autoincrement())
-  name                     String                   @db.VarChar(64)
-  description              String?                  @db.Text
-  price                    Decimal                  @db.Decimal(10, 2)
-  capacity                 Int
-  owner_id                 Int                      @unique
-  location_id              Location?
-  availability             Availability[]
-  coworking_space_image    CoworkingSpaceImage[]
-  coworking_space_facility CoworkingSpaceFacility[]
-  booking                  Booking[]
+  space_id                   Int                      @id @default(autoincrement())
+  name                       String                   @db.VarChar(64)
+  description                String?                  @db.Text
+  price                      Decimal                  @db.Decimal(10, 2)
+  capacity                   Int
+  owner_id                   Int                      @unique
+  location_id                Location?
+  availabilities             Availability[]
+  coworking_space_images     CoworkingSpaceImage[]
+  coworking_space_facilities CoworkingSpaceFacility[]
+  bookings                   Booking[]
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -73,7 +74,7 @@ model CoworkingSpace {
 
 model CoworkingSpaceImage {
   image_id  Int    @id @default(autoincrement())
-  space_id  Int    @unique
+  space_id  Int
   image_url String @db.VarChar(256)
 
   coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Cascade, map: "coworking_space_image_ibfk_1")
@@ -95,7 +96,7 @@ model Location {
 
 model Availability {
   availability_id Int      @id @default(autoincrement())
-  space_id        Int      @unique
+  space_id        Int
   date            DateTime @db.Date
   start_hour      Int
   end_hour        Int
@@ -111,14 +112,14 @@ model Facility {
   name        String @db.VarChar(64)
   description String @db.Text
 
-  coworking_space_facility CoworkingSpaceFacility[]
+  coworking_space_facilities CoworkingSpaceFacility[]
 
   @@map("facility")
 }
 
 model CoworkingSpaceFacility {
-  space_id        Int            @unique
-  facility_id     Int            @unique
+  space_id        Int
+  facility_id     Int
   facility        Facility       @relation(fields: [facility_id], references: [facility_id], onDelete: Cascade, onUpdate: Cascade, map: "coworking_space_facility_ibfk_2")
   coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Cascade, map: "coworking_space_facility_ibfk_1")
 
@@ -128,8 +129,8 @@ model CoworkingSpaceFacility {
 
 model Booking {
   booking_id  String   @id @default(uuid())
-  space_id    Int      @unique
-  tenant_id   Int      @unique
+  space_id    Int
+  tenant_id   Int
   payment     Payment?
   date        DateTime @db.Date
   start_hour  Int
