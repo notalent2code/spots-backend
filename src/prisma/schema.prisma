@@ -13,7 +13,8 @@ model Users {
   password_hash String   @db.VarChar(256)
   first_name    String   @db.VarChar(64)
   last_name     String   @db.VarChar(64)
-  phone_number  String   @db.VarChar(20) @unique
+  phone_number  String   @unique @db.VarChar(20)
+  refresh_token String?  @db.Text
   user_type     UserType
   tenant        Tenant?
   owner         Owner?
