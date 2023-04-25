@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model User {
   user_id       Int      @id @default(autoincrement())
   email         String   @unique
   password_hash String   @db.VarChar(256)
@@ -21,16 +21,16 @@ model Users {
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
-  @@map("users")
+  @@map("user")
 }
 
 model Tenant {
-  tenant_id       Int       @id @default(autoincrement())
-  user_id         Int       @unique
-  profile_picture String?   @db.VarChar(256)
-  bookings        Booking[]
+  tenant_id  Int       @id @default(autoincrement())
+  user_id    Int       @unique
+  avatar_url String?   @db.VarChar(256)
+  bookings   Booking[]
 
-  user Users @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "tenant_ibfk_1")
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "tenant_ibfk_1")
 
   @@map("tenant")
 }
@@ -46,7 +46,7 @@ model Owner {
   status           OwnerStatus      @default(PENDING)
   coworking_spaces CoworkingSpace[]
 
-  user Users @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "owner_ibfk_1")
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "owner_ibfk_1")
 
   @@map("owner")
 }
