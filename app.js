@@ -3,6 +3,7 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
+const path = require("path");
 const dotenv = require("dotenv");
 
 const indexRouter = require("./src/routes/index");
@@ -16,7 +17,8 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, "./src/uploads")));
 app.use(cookieParser());
 app.use(
   cors({
