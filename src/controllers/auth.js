@@ -23,7 +23,7 @@ const register = async (req, res) => {
       userType,
     } = req.body;
 
-    const userExists = await prisma.users.findUnique({
+    const userExists = await prisma.user.findUnique({
       where: {
         email,
       },
@@ -40,19 +40,56 @@ const register = async (req, res) => {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await prisma.users.create({
-      data: {
-        email,
-        password_hash: hashedPassword,
-        first_name: firstName,
-        last_name: lastName,
-        phone_number: phoneNumber,
-        user_type: userType,
-      },
-    });
+    let user;
+    const userData = {
+      email,
+      password_hash: hashedPassword,
+      first_name: firstName,
+      last_name: lastName,
+      phone_number: phoneNumber,
+      user_type: userType,
+    };
 
-    delete user.password_hash;
-    res.status(201).json({ message: "User created succesfully", user: user });
+    if (userType === "TENANT") {
+      const defaultAvatarURL = `${process.env.API_DOMAIN}/uploads/avatar/default-avatar.png`;
+      
+      user = await prisma.user.create({
+        data: {
+          ...userData,
+          tenant: {
+            create: {
+              avatar_url: defaultAvatarURL,
+            },
+          },
+        },
+        include: {
+          tenant: true,
+        },
+      });
+    } else if (userType === "OWNER") {
+      user = await prisma.user.create({
+        data: {
+          ...userData,
+          owner: {
+            create: {},
+          },
+        },
+        include: {
+          owner: true,
+        },
+      });
+    } else if (userType === "ADMIN") {
+      user = await prisma.user.create({
+        data: {
+          ...userData,
+        },
+      });
+    }
+
+    if (user) {
+      delete user.password_hash;
+      res.status(201).json({ message: "User created successfully", user });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -66,7 +103,7 @@ const login = async (req, res) => {
     }
 
     const { email, password } = req.body;
-    const user = await prisma.users.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         email,
       },
@@ -106,7 +143,7 @@ const login = async (req, res) => {
       }
     );
 
-    await prisma.users.update({
+    await prisma.user.update({
       where: {
         user_id: userId,
       },
@@ -135,7 +172,7 @@ const logout = async (req, res) => {
     if (!refreshToken)
       return res.status(204).json({ message: "No token provided" });
 
-    const user = await prisma.users.findMany({
+    const user = await prisma.user.findMany({
       where: {
         refresh_token: refreshToken,
       },
@@ -147,7 +184,7 @@ const logout = async (req, res) => {
 
     const userId = user[0].user_id;
 
-    await prisma.users.update({
+    await prisma.user.update({
       where: {
         user_id: userId,
       },
@@ -170,7 +207,7 @@ const refreshToken = async (req, res) => {
 
     if (!refreshToken) return res.status(401).send("Access denied");
 
-    const user = await prisma.users.findMany({
+    const user = await prisma.user.findMany({
       where: {
         refresh_token: refreshToken,
       },
