@@ -128,7 +128,7 @@ const login = async (req, res) => {
       },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "20s",
+        expiresIn: "30m",
       }
     );
 
@@ -172,17 +172,17 @@ const logout = async (req, res) => {
     if (!refreshToken)
       return res.status(204).json({ message: "No token provided" });
 
-    const user = await prisma.user.findMany({
+    const user = await prisma.user.findFirst({
       where: {
         refresh_token: refreshToken,
       },
     });
 
-    const token = user[0].refresh_token;
+    const token = user.refresh_token;
 
     if (!token) return res.status(204).json({ message: "No token provided" });
 
-    const userId = user[0].user_id;
+    const userId = user.user_id;
 
     await prisma.user.update({
       where: {
@@ -207,13 +207,13 @@ const refreshToken = async (req, res) => {
 
     if (!refreshToken) return res.status(401).send("Access denied");
 
-    const user = await prisma.user.findMany({
+    const user = await prisma.user.findFirst({
       where: {
         refresh_token: refreshToken,
       },
     });
 
-    const token = user[0].refresh_token;
+    const token = user.refresh_token;
 
     if (!token) return res.status(403).send("Invalid token");
 
@@ -225,7 +225,7 @@ const refreshToken = async (req, res) => {
           userType: decoded.userType,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "20s" }
+        { expiresIn: "30m" }
       );
       res.status(200).json({ accessToken });
     });
