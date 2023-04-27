@@ -10,7 +10,11 @@
 6. Push prisma schema to database using command: `npx prisma db push`
 7. Run this express app using command: `npm run dev` or `yarn dev`
 
-n.p. seeder soon to be added
+note: seeder soon to be added
+
+## API Documentation
+
+You can check API documentation [here](https://documenter.getpostman.com/view/18486727/2s93Y5PfQQ)
 
 ## Acknowledgements
 
