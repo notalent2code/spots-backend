@@ -3,10 +3,12 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
+const path = require("path");
 const dotenv = require("dotenv");
 
 const indexRouter = require("./src/routes/index");
 const authRouter = require("./src/routes/auth");
+const tenantRouter = require("./src/routes/tenant");
 
 dotenv.config();
 const app = express();
@@ -16,7 +18,8 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, "./src/uploads")));
 app.use(cookieParser());
 app.use(
   cors({
@@ -28,6 +31,7 @@ app.use(
 // Routes
 app.use("/api/", indexRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/tenants", tenantRouter);
 
 // The 404 Route
 app.get("*", function (_req, res) {
