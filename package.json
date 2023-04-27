@@ -19,7 +19,8 @@
     "express": "~4.16.1",
     "helmet": "^6.1.5",
     "jsonwebtoken": "^9.0.0",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "http-errors": "^2.0.0",
