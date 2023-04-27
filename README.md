@@ -1,4 +1,4 @@
-<!-- Create instruction to start this express app -->
+# Spots API
 
 ## How to start this express app
 
