@@ -13,7 +13,6 @@ const verifyToken = async (req, res, next) => {
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) return res.status(403).send("Invalid token");
       req.user = decoded;
-      console.log(req.user);
       next();
     });
   } catch (error) {

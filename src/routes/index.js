@@ -1,6 +1,6 @@
-var express = require("express");
+const express = require("express");
 const verifyToken = require("../middlewares/auth");
-var router = express.Router();
+const router = express.Router();
 
 /* GET home page. */
 router.get("/", verifyToken, (req, res, next) => {
