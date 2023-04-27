@@ -8,6 +8,7 @@ const dotenv = require("dotenv");
 
 const indexRouter = require("./src/routes/index");
 const authRouter = require("./src/routes/auth");
+const tenantRouter = require("./src/routes/tenant");
 
 dotenv.config();
 const app = express();
@@ -30,6 +31,7 @@ app.use(
 // Routes
 app.use("/api/", indexRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/tenants", tenantRouter);
 
 // The 404 Route
 app.get("*", function (_req, res) {
