@@ -11,3 +11,10 @@
 7. Run this express app using command: `npm run dev` or `yarn dev`
 
 n.p. seeder soon to be added
+
+## Acknowledgements
+
+- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+- [Express](https://expressjs.com/)
+- [Prisma](https://www.prisma.io/)
+- [MySQL](https://www.mysql.com/)
