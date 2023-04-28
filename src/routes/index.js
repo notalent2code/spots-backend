@@ -1,5 +1,6 @@
 const express = require("express");
 const verifyToken = require("../middlewares/auth");
+
 const router = express.Router();
 
 /* GET home page. */
