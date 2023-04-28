@@ -36,14 +36,14 @@ model Tenant {
 }
 
 model Owner {
-  owner_id         Int              @id @default(autoincrement())
-  user_id          Int              @unique
-  nik              String?          @db.VarChar(16)
-  ktp_picture      String?          @db.VarChar(256)
-  balance          Decimal          @default(0) @db.Decimal(10, 2)
-  bank_name        String?          @db.VarChar(36)
-  card_number      String?          @db.VarChar(20)
-  status           OwnerStatus      @default(PENDING)
+  owner_id         Int                       @id @default(autoincrement())
+  user_id          Int                       @unique
+  nik              String?                   @db.VarChar(16)
+  ktp_picture      String?                   @db.VarChar(256)
+  balance          Decimal                   @default(0) @db.Decimal(10, 2)
+  bank_name        String?                   @db.VarChar(36)
+  card_number      String?                   @db.VarChar(20)
+  status           OwnerCoworkingSpaceStatus @default(PENDING)
   coworking_spaces CoworkingSpace[]
 
   user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "owner_ibfk_1")
@@ -52,12 +52,13 @@ model Owner {
 }
 
 model CoworkingSpace {
-  space_id                   Int                      @id @default(autoincrement())
-  name                       String                   @db.VarChar(64)
-  description                String?                  @db.Text
-  price                      Decimal                  @db.Decimal(10, 2)
+  space_id                   Int                       @id @default(autoincrement())
+  name                       String                    @db.VarChar(64)
+  description                String?                   @db.Text
+  price                      Decimal                   @db.Decimal(10, 2)
   capacity                   Int
-  owner_id                   Int                      @unique
+  owner_id                   Int                       @unique
+  status                     OwnerCoworkingSpaceStatus @default(PENDING)
   location_id                Location?
   availabilities             Availability[]
   coworking_space_images     CoworkingSpaceImage[]
@@ -166,7 +167,7 @@ enum UserType {
   ADMIN
 }
 
-enum OwnerStatus {
+enum OwnerCoworkingSpaceStatus {
   PENDING
   APPROVED
   REJECTED
