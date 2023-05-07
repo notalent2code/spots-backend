@@ -1,4 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
+const fs = require("fs");
+const path = require("path");
 
 const prisma = new PrismaClient();
 
@@ -52,6 +54,11 @@ const updateTenantProfile = async (req, res) => {
     const avatarURL = `${process.env.API_DOMAIN}/uploads/avatar/${avatarFileName}`;
 
     let updatedTenant = await tenantProfile(req, res);
+
+    if (updatedTenant.avatar_url !== `${process.env.API_DOMAIN}/uploads/avatar/default-avatar.png`) {
+      const oldAvatar = updatedTenant.avatar_url.split("/uploads/avatar/")[1];
+      fs.unlinkSync(path.join(__dirname, `../uploads/avatar/${oldAvatar}`));
+    }
 
     if (email && email !== updatedTenant.user.email) {
       const emailExist = await prisma.user.findUnique({
