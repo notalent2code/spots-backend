@@ -1,0 +1,23 @@
+### Register Tenant
+POST http://localhost:4000/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "megumi@gmail.com",
+    "password": "coba12345",
+    "confirmPassword": "coba12345",
+    "firstName": "Megumi",
+    "lastName": "Kato",
+    "phoneNumber": "085712345671",
+    "userType": "TENANT"
+}
+
+### Login Tenant
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "megumi@gmail.com",
+    "password": "coba12345"
+}
+
