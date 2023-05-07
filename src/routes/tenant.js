@@ -1,7 +1,7 @@
 const express = require("express");
 const verifyToken = require("../middlewares/auth");
 const tenantController = require("../controllers/tenant");
-const upload = require("../utils/uploadImage");
+const { avatarUpload } = require("../utils/uploadImage");
 
 const router = express.Router();
 
@@ -9,6 +9,6 @@ const router = express.Router();
 router.get("/:tenantId/profile", verifyToken, tenantController.getTenantProfile);
 
 // PUT /tenants/:tenantId/profile
-router.put("/:tenantId/profile", verifyToken, upload.single('avatarUrl'), tenantController.updateTenantProfile);
+router.put("/:tenantId/profile", verifyToken, avatarUpload.single('avatarURL'), tenantController.updateTenantProfile);
 
 module.exports = router;

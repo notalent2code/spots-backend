@@ -1,4 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
+const fs = require("fs");
+const path = require("path");
 
 const prisma = new PrismaClient();
 
@@ -21,14 +23,6 @@ const tenantProfile = async (req, res) => {
     },
   });
 
-  if (req.user.userId !== tenant.user_id) {
-    return res.status(403).json({ message: "Forbidden" });
-  }
-
-  if (!tenant) {
-    return res.status(404).json({ message: "Tenant not found" });
-  }
-
   return tenant;
 };
 
@@ -36,6 +30,14 @@ const tenantProfile = async (req, res) => {
 const getTenantProfile = async (req, res) => {
   try {
     const tenant = await tenantProfile(req, res);
+    if (req.user.userId !== tenant.user_id) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    if (!tenant) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
     return res.status(200).json({ tenant });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -52,6 +54,22 @@ const updateTenantProfile = async (req, res) => {
     const avatarURL = `${process.env.API_DOMAIN}/uploads/avatar/${avatarFileName}`;
 
     let updatedTenant = await tenantProfile(req, res);
+
+    if (req.user.userId !== updatedTenant.user_id) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    if (!updatedTenant) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    if (
+      updatedTenant.avatar_url !==
+      `${process.env.API_DOMAIN}/uploads/avatar/default-avatar.png`
+    ) {
+      const oldAvatar = updatedTenant.avatar_url.split("/uploads/avatar/")[1];
+      fs.unlinkSync(path.join(__dirname, `../uploads/avatar/${oldAvatar}`));
+    }
 
     if (email && email !== updatedTenant.user.email) {
       const emailExist = await prisma.user.findUnique({
