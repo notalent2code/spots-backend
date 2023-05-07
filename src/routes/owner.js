@@ -5,5 +5,5 @@ const upload = require("../utils/uploadImage");
 
 const router = express.Router();
 
-// GET /owners/:ownerId/profile
-router.get("/:ownerId/profile", verifyToken, ownerController.getOwnerProfile);
+// GET /owners/:ownerId/info
+router.get("/:ownerId/info", verifyToken, upload.single('ktpURL'), ownerController.getOwnerInfo);
