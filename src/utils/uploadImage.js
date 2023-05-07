@@ -1,9 +1,18 @@
 const multer = require("multer");
 const path = require("path");
 
-const storage = multer.diskStorage({
+const avatarStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join(__dirname, "../uploads/avatar/"));
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${req.user.userId}_${Date.now()}${path.extname(file.originalname)}`);
+    },
+});
+
+const ktpStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, "../uploads/ktp/"));
     },
     filename: (req, file, cb) => {
         cb(null, `${req.user.userId}_${Date.now()}${path.extname(file.originalname)}`);
@@ -19,12 +28,23 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({
-    storage,
+const avatarUpload = multer({
+    storage: avatarStorage,
     fileFilter,
     limits: {
         fileSize: 5 * 1024 * 1024,
     },
 });
 
-module.exports = upload;
+const ktpUpload = multer({
+    storage: ktpStorage,
+    fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024,
+    },
+});
+
+module.exports = {
+    avatarUpload,
+    ktpUpload,
+}
