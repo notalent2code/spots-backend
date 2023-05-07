@@ -9,6 +9,6 @@ const router = express.Router();
 router.get("/:tenantId/profile", verifyToken, tenantController.getTenantProfile);
 
 // PUT /tenants/:tenantId/profile
-router.put("/:tenantId/profile", verifyToken, upload.single('avatarUrl'), tenantController.updateTenantProfile);
+router.put("/:tenantId/profile", verifyToken, upload.single('avatarURL'), tenantController.updateTenantProfile);
 
 module.exports = router;
