@@ -78,13 +78,18 @@ const register = async (req, res) => {
           owner: true,
         },
       });
-    } else if (userType === "ADMIN") {
-      user = await prisma.user.create({
-        data: {
-          ...userData,
-        },
-      });
+    } else {
+      return res.status(400).json({ message: "Invalid user type" });
     }
+
+    // Testing purposes only
+    // else if (userType === "ADMIN") {
+    //   user = await prisma.user.create({
+    //     data: {
+    //       ...userData,
+    //     },
+    //   });
+    // }
 
     if (user) {
       delete user.password_hash;
