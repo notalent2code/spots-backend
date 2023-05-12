@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const verifyToken = async (req, res, next) => {
+const verifyAuth = async (req, res, next) => {
   try {
     const authHeader = req.header("Authorization");
     const token = authHeader && authHeader.split(" ")[1];
@@ -20,4 +20,4 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-module.exports = verifyToken;
+module.exports = verifyAuth;
