@@ -6,10 +6,16 @@ const helmet = require("helmet");
 const path = require("path");
 const dotenv = require("dotenv");
 
+const verifyAuth = require("./src/middlewares/auth");
+const verifyTenant = require("./src/middlewares/tenant");
+const verifyOwner = require("./src/middlewares/owner");
+const verifyAdmin = require("./src/middlewares/admin");
+
 const indexRouter = require("./src/routes/index");
 const authRouter = require("./src/routes/auth");
 const tenantRouter = require("./src/routes/tenant");
 const ownerRouter = require("./src/routes/owner");
+const adminRouter = require("./src/routes/admin");
 
 dotenv.config();
 const app = express();
@@ -32,8 +38,9 @@ app.use(
 // Routes
 app.use("/api/", indexRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/tenants", tenantRouter);
-app.use("/api/owners", ownerRouter);
+app.use("/api/tenants", verifyAuth, verifyTenant, tenantRouter);
+app.use("/api/owners", verifyAuth, verifyOwner, ownerRouter);
+app.use("/api/admin/", verifyAuth, verifyAdmin, adminRouter);
 
 // The 404 Route
 app.get("*", function (_req, res) {
