@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
-dotenv.config();
+dotenv.config({path: __dirname + '/.env'});
 
 const verifyTenant = async (req, res, next) => {
   try {

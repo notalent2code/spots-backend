@@ -9,7 +9,7 @@ const debug = require('debug')('spots-backend:server');
 const http = require('http');
 const dotenv = require('dotenv');
 
-dotenv.config();
+dotenv.config({path: __dirname + '/.env'});
 
 /**
  * Get port from environment and store in Express.

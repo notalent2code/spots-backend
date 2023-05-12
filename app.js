@@ -17,7 +17,7 @@ const tenantRouter = require("./src/routes/tenant");
 const ownerRouter = require("./src/routes/owner");
 const adminRouter = require("./src/routes/admin");
 
-dotenv.config();
+dotenv.config({path: __dirname + '/.env'});
 const app = express();
 
 // Middlewares

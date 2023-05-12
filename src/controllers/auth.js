@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 const dotenv = require("dotenv");
 
-dotenv.config();
+dotenv.config({path: __dirname + '/.env'});
 const prisma = new PrismaClient();
 
 // Register user
