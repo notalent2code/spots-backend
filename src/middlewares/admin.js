@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const verifyAuth = async (req, res, next) => {
+const verifyAdmin = async (req, res, next) => {
   try {
     const authHeader = req.header("Authorization");
     const token = authHeader && authHeader.split(" ")[1];
@@ -12,6 +12,8 @@ const verifyAuth = async (req, res, next) => {
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) return res.status(403).send("Invalid token");
+      if (decoded.userType !== "ADMIN")
+        return res.status(403).send("Admin access denied");
       req.user = decoded;
       next();
     });
@@ -20,4 +22,4 @@ const verifyAuth = async (req, res, next) => {
   }
 };
 
-module.exports = verifyAuth;
+module.exports = verifyAdmin;
