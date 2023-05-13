@@ -22,7 +22,6 @@ const ownerInfo = async (req, res) => {
       },
     },
   });
-  console.log(owner);
 
   return owner;
 };
@@ -30,8 +29,6 @@ const ownerInfo = async (req, res) => {
 const getOwnerInfo = async (req, res) => {
   try {
     const owner = await ownerInfo(req, res);
-
-    console.log(owner);
 
     if (req.user.userId !== owner.user_id) {
       return res.status(403).json({ message: "Forbidden" });
@@ -64,8 +61,6 @@ const updateOwnerInfo = async (req, res) => {
     const ktpURL = `${process.env.API_DOMAIN}/uploads/ktp/${ktpFileName}`;
 
     let updatedOwner = await ownerInfo(req, res);
-
-    console.log(updatedOwner);
 
     if (req.user.userId !== updatedOwner.user_id) {
       return res.status(403).json({ message: "Forbidden" });
