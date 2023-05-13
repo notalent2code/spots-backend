@@ -10,12 +10,12 @@ const router = express.Router();
 router.get("/", coworkingController.getCoworkingSpaces);
 
 // GET /coworking-space/:spaceId
-router.get("/:spaceId", coworkingController.getCoworkingSpace);
+router.get("/:spaceId", coworkingController.getCoworkingSpaceById);
 
 // // POST /coworking-space
 router.post("/", verifyAuth, verifyOwner, coworkingUpload.array('spaceURLs', 10), coworkingController.addCoworkingSpace);
 
 // PUT /coworking-space/:spaceId
-router.put("/:spaceId", verifyAuth, verifyOwner, coworkingController.updateCoworkingSpace);
+router.put("/:spaceId", verifyAuth, verifyOwner, coworkingUpload.array('spaceURLs', 10), coworkingController.updateCoworkingSpace);
 
 module.exports = router;
