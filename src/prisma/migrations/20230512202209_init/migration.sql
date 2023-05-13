@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE `users` (
+CREATE TABLE `user` (
     `user_id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
     `password_hash` VARCHAR(256) NOT NULL,
@@ -11,8 +11,8 @@ CREATE TABLE `users` (
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `users_email_key`(`email`),
-    UNIQUE INDEX `users_phone_number_key`(`phone_number`),
+    UNIQUE INDEX `user_email_key`(`email`),
+    UNIQUE INDEX `user_phone_number_key`(`phone_number`),
     PRIMARY KEY (`user_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -20,7 +20,7 @@ CREATE TABLE `users` (
 CREATE TABLE `tenant` (
     `tenant_id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
-    `profile_picture` VARCHAR(256) NULL,
+    `avatar_url` VARCHAR(256) NULL,
 
     UNIQUE INDEX `tenant_user_id_key`(`user_id`),
     PRIMARY KEY (`tenant_id`)
@@ -49,10 +49,11 @@ CREATE TABLE `coworking_space` (
     `price` DECIMAL(10, 2) NOT NULL,
     `capacity` INTEGER NOT NULL,
     `owner_id` INTEGER NOT NULL,
+    `status` ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `coworking_space_owner_id_key`(`owner_id`),
+    UNIQUE INDEX `coworking_space_name_key`(`name`),
     PRIMARY KEY (`space_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -62,7 +63,6 @@ CREATE TABLE `coworking_space_image` (
     `space_id` INTEGER NOT NULL,
     `image_url` VARCHAR(256) NOT NULL,
 
-    UNIQUE INDEX `coworking_space_image_space_id_key`(`space_id`),
     PRIMARY KEY (`image_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -87,7 +87,6 @@ CREATE TABLE `availability` (
     `end_hour` INTEGER NOT NULL,
     `is_booked` BOOLEAN NOT NULL DEFAULT false,
 
-    UNIQUE INDEX `availability_space_id_key`(`space_id`),
     PRIMARY KEY (`availability_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -97,6 +96,7 @@ CREATE TABLE `facility` (
     `name` VARCHAR(64) NOT NULL,
     `description` TEXT NOT NULL,
 
+    UNIQUE INDEX `facility_name_key`(`name`),
     PRIMARY KEY (`facility_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -105,8 +105,6 @@ CREATE TABLE `coworking_space_facility` (
     `space_id` INTEGER NOT NULL,
     `facility_id` INTEGER NOT NULL,
 
-    UNIQUE INDEX `coworking_space_facility_space_id_key`(`space_id`),
-    UNIQUE INDEX `coworking_space_facility_facility_id_key`(`facility_id`),
     PRIMARY KEY (`space_id`, `facility_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -122,8 +120,6 @@ CREATE TABLE `booking` (
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `booking_space_id_key`(`space_id`),
-    UNIQUE INDEX `booking_tenant_id_key`(`tenant_id`),
     INDEX `booking_space_id_index`(`space_id`),
     INDEX `booking_tenant_id_index`(`tenant_id`),
     PRIMARY KEY (`booking_id`)
@@ -143,10 +139,10 @@ CREATE TABLE `payment` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `tenant` ADD CONSTRAINT `tenant_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `tenant` ADD CONSTRAINT `tenant_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `owner` ADD CONSTRAINT `owner_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `owner` ADD CONSTRAINT `owner_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `coworking_space` ADD CONSTRAINT `coworking_space_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `owner`(`owner_id`) ON DELETE CASCADE ON UPDATE CASCADE;

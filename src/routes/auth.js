@@ -14,6 +14,6 @@ router.post("/login", authController.login);
 router.delete("/logout", verifyAuth, authController.logout);
 
 // GET /auth/refresh-token
-router.get("/refresh-token", verifyAuth, authController.refreshToken);
+router.get("/refresh-token", authController.refreshToken);
 
 module.exports = router;
