@@ -69,15 +69,47 @@ const verifyOwner = async (req, res) => {
         status: ownerStatus,
       },
     });
+    return res.status(200).json({ owner });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 
-  return res.status(200).json({ owner });
+};
+
+const verifyCoworkingSpace = async (req, res) => {
+  const { spaceId } = req.params;
+  const { spaceStatus } = req.body;
+
+  if (
+    !spaceId ||
+    spaceId === "" ||
+    !spaceStatus ||
+    spaceStatus === "" ||
+    (spaceStatus !== "APPROVED" && spaceStatus !== "REJECTED")
+  ) {
+    return res.status(400).json({ message: "Invalid space information" });
+  }
+
+  let coworkingSpace;
+
+  try {
+    coworkingSpace = await prisma.coworkingSpace.update({
+      where: {
+        space_id: parseInt(spaceId),
+      },
+      data: {
+        status: spaceStatus,
+      },
+    });
+    return res.status(200).json({ coworkingSpace });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 module.exports = {
   getTenants,
   getOwners,
   verifyOwner,
+  verifyCoworkingSpace,
 };
