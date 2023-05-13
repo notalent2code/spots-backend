@@ -53,11 +53,11 @@ model Owner {
 
 model CoworkingSpace {
   space_id                   Int                       @id @default(autoincrement())
-  name                       String                    @db.VarChar(64)
+  name                       String                    @unique @db.VarChar(64)
   description                String?                   @db.Text
   price                      Decimal                   @db.Decimal(10, 2)
   capacity                   Int
-  owner_id                   Int                       @unique
+  owner_id                   Int
   status                     OwnerCoworkingSpaceStatus @default(PENDING)
   location_id                Location?
   availabilities             Availability[]
@@ -110,7 +110,7 @@ model Availability {
 
 model Facility {
   facility_id Int    @id @default(autoincrement())
-  name        String @db.VarChar(64)
+  name        String @unique @db.VarChar(64)
   description String @db.Text
 
   coworking_space_facilities CoworkingSpaceFacility[]
