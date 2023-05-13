@@ -59,7 +59,7 @@ model CoworkingSpace {
   capacity                   Int
   owner_id                   Int
   status                     OwnerCoworkingSpaceStatus @default(PENDING)
-  location_id                Location?
+  location                   Location?
   availabilities             Availability[]
   coworking_space_images     CoworkingSpaceImage[]
   coworking_space_facilities CoworkingSpaceFacility[]
