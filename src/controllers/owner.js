@@ -5,11 +5,11 @@ const path = require("path");
 const prisma = new PrismaClient();
 
 const ownerInfo = async (req, res) => {
-  const { ownerId } = req.params;
+  const userId = req.user.userId;
 
   const owner = await prisma.owner.findUnique({
     where: {
-      owner_id: parseInt(ownerId),
+      user_id: parseInt(userId),
     },
     include: {
       user: {
@@ -40,6 +40,7 @@ const getOwnerInfo = async (req, res) => {
 
     res.status(200).json({ owner });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -55,9 +56,8 @@ const updateOwnerInfo = async (req, res) => {
       bankName,
       cardNumber,
     } = req.body;
-    const ktpFileName = req.file ? req.file.filename : null;
-    const { ownerId } = req.params;
 
+    const ktpFileName = req.file ? req.file.filename : null;
     const ktpURL = `${process.env.API_DOMAIN}/uploads/ktp/${ktpFileName}`;
 
     let updatedOwner = await ownerInfo(req, res);
@@ -91,7 +91,7 @@ const updateOwnerInfo = async (req, res) => {
 
     updatedOwner = await prisma.owner.update({
       where: {
-        owner_id: parseInt(ownerId),
+        owner_id: updatedOwner.owner_id,
       },
       data: {
         ktp_picture: ktpURL || updatedOwner.ktp_picture,
