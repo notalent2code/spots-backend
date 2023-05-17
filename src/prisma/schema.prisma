@@ -95,19 +95,6 @@ model Location {
   @@map("location")
 }
 
-model Availability {
-  availability_id Int      @id @default(autoincrement())
-  space_id        Int
-  date            DateTime @db.Date
-  start_hour      Int
-  end_hour        Int
-  is_booked       Boolean  @default(false)
-
-  coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Cascade, map: "availability_ibfk_1")
-
-  @@map("availability")
-}
-
 model Facility {
   facility_id Int    @id @default(autoincrement())
   name        String @unique @db.VarChar(64)
@@ -126,6 +113,19 @@ model CoworkingSpaceFacility {
 
   @@id([space_id, facility_id])
   @@map("coworking_space_facility")
+}
+
+model Availability {
+  availability_id Int      @id @default(autoincrement())
+  space_id        Int
+  date            DateTime @db.Date
+  start_hour      Int
+  end_hour        Int
+  is_booked       Boolean  @default(false)
+
+  coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Cascade, map: "availability_ibfk_1")
+
+  @@map("availability")
 }
 
 model Booking {
