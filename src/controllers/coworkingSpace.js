@@ -5,9 +5,47 @@ const jwt = require("jsonwebtoken");
 
 const prisma = new PrismaClient();
 
-const prismaStatement = {
-  include: {
+const getAllPrismaStatement = {
+  select: {
+    name: true,
+    price: true,
+    capacity: true,
+    status: true,
     location: true,
+    // availabilities: true,
+    coworking_space_images: {
+      select: {
+        image_url: true,
+      },
+      take: 1,
+    },
+  },
+};
+
+const getByIdPrismaStatement = {
+  select: {
+    name: true,
+    description: true,
+    price: true,
+    capacity: true,
+    status: true,
+    owner: {
+      select: {
+        user: {
+          select: {
+            phone_number: true,
+          },
+        },
+      },
+    },
+    location: {
+      select: {
+        location_id: true,
+        address: true,
+        latitude: true,
+        longitude: true,
+      },
+    },
     // availabilities: true,
     coworking_space_images: {
       select: {
@@ -52,18 +90,18 @@ const getCoworkingSpaces = async (req, res) => {
         where: {
           owner_id: owner.owner_id,
         },
-        ...prismaStatement,
+        ...getAllPrismaStatement,
       });
     } else if (req.user && req.user.userType === "ADMIN") {
       coworkingSpaces = await prisma.coworkingSpace.findMany({
-        ...prismaStatement,
+        ...getAllPrismaStatement,
       });
     } else {
       coworkingSpaces = await prisma.coworkingSpace.findMany({
         where: {
           status: "APPROVED",
         },
-        ...prismaStatement,
+        ...getAllPrismaStatement,
       });
     }
     if (!coworkingSpaces) {
@@ -72,6 +110,7 @@ const getCoworkingSpaces = async (req, res) => {
 
     return res.status(200).json({ coworkingSpaces });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -101,14 +140,14 @@ const getCoworkingSpaceById = async (req, res) => {
           owner_id: owner.owner_id,
           space_id: parseInt(req.params.spaceId),
         },
-        ...prismaStatement,
+        ...getByIdPrismaStatement,
       });
     } else if (req.user && req.user.userType === "ADMIN") {
       coworkingSpace = await prisma.coworkingSpace.findUnique({
         where: {
           space_id: parseInt(req.params.spaceId),
         },
-        ...prismaStatement,
+        ...getByIdPrismaStatement,
       });
     } else {
       coworkingSpace = await prisma.coworkingSpace.findFirst({
@@ -116,7 +155,7 @@ const getCoworkingSpaceById = async (req, res) => {
           space_id: parseInt(req.params.spaceId),
           status: "APPROVED",
         },
-        ...prismaStatement,
+        ...getByIdPrismaStatement,
       });
     }
 
