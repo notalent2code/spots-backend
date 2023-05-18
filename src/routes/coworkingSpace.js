@@ -19,7 +19,4 @@ router.post("/", verifyAuth, verifyOwner, coworkingUpload.array('spaceURLs', 10)
 // PUT /coworking-space/:spaceId
 router.put("/:spaceId", verifyAuth, verifyOwner, coworkingUpload.array('spaceURLs', 10), coworkingController.updateCoworkingSpace);
 
-// POST /coworking-space/:spaceId/book
-router.post("/:spaceId/book", verifyAuth, verifyTenant, coworkingController.bookCoworkingSpace);
-
 module.exports = router;
