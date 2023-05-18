@@ -5,11 +5,11 @@ const path = require("path");
 const prisma = new PrismaClient();
 
 const tenantProfile = async (req, res) => {
-  const { tenantId } = req.params;
+  const userId = req.user.userId;
 
   const tenant = await prisma.tenant.findUnique({
     where: {
-      tenant_id: parseInt(tenantId),
+      user_id: parseInt(userId),
     },
     include: {
       user: {
@@ -49,7 +49,6 @@ const updateTenantProfile = async (req, res) => {
   try {
     const { email, firstName, lastName, phoneNumber } = req.body;
     const avatarFileName = req.file ? req.file.filename : null;
-    const { tenantId } = req.params;
 
     const avatarURL = `${process.env.API_DOMAIN}/uploads/avatar/${avatarFileName}`;
 
@@ -97,7 +96,7 @@ const updateTenantProfile = async (req, res) => {
 
     updatedTenant = await prisma.tenant.update({
       where: {
-        tenant_id: parseInt(tenantId),
+        tenant_id: updatedTenant.tenant_id,
       },
       data: {
         avatar_url: avatarURL || updatedTenant.avatar_url,

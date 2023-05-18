@@ -95,19 +95,6 @@ model Location {
   @@map("location")
 }
 
-model Availability {
-  availability_id Int      @id @default(autoincrement())
-  space_id        Int
-  date            DateTime @db.Date
-  start_hour      Int
-  end_hour        Int
-  is_booked       Boolean  @default(false)
-
-  coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Cascade, map: "availability_ibfk_1")
-
-  @@map("availability")
-}
-
 model Facility {
   facility_id Int    @id @default(autoincrement())
   name        String @unique @db.VarChar(64)
@@ -128,12 +115,25 @@ model CoworkingSpaceFacility {
   @@map("coworking_space_facility")
 }
 
+model Availability {
+  availability_id Int     @id @default(autoincrement())
+  space_id        Int
+  date            String
+  start_hour      Int
+  end_hour        Int
+  is_booked       Boolean @default(false)
+
+  coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Cascade, map: "availability_ibfk_1")
+
+  @@map("availability")
+}
+
 model Booking {
   booking_id  String   @id @default(uuid())
   space_id    Int
   tenant_id   Int
   payment     Payment?
-  date        DateTime @db.Date
+  date        String
   start_hour  Int
   end_hour    Int
   total_price Decimal  @db.Decimal(10, 2)
@@ -151,8 +151,9 @@ model Booking {
 model Payment {
   payment_id String        @id @default(uuid())
   booking_id String        @unique
+  method     String        @db.VarChar(16)
   amount     Decimal       @db.Decimal(10, 2)
-  status     PaymentStatus @default(PENDING)
+  status     String        
   created_at DateTime      @default(now())
   updated_at DateTime      @updatedAt
 
@@ -171,10 +172,4 @@ enum OwnerCoworkingSpaceStatus {
   PENDING
   APPROVED
   REJECTED
-}
-
-enum PaymentStatus {
-  PENDING
-  SUCCESS
-  FAILED
 }

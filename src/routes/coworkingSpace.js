@@ -2,6 +2,7 @@ const express = require("express");
 const coworkingController = require("../controllers/coworkingSpace");
 const verifyAuth = require("../middlewares/auth");
 const verifyOwner = require("../middlewares/owner");
+const verifyTenant = require("../middlewares/tenant");
 const { coworkingUpload } = require("../utils/uploadImage");
 
 const router = express.Router();
@@ -12,7 +13,7 @@ router.get("/", coworkingController.getCoworkingSpaces);
 // GET /coworking-space/:spaceId
 router.get("/:spaceId", coworkingController.getCoworkingSpaceById);
 
-// // POST /coworking-space
+// POST /coworking-space
 router.post("/", verifyAuth, verifyOwner, coworkingUpload.array('spaceURLs', 10), coworkingController.addCoworkingSpace);
 
 // PUT /coworking-space/:spaceId
