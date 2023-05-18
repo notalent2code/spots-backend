@@ -17,6 +17,7 @@ const tenantRouter = require("./src/routes/tenant");
 const ownerRouter = require("./src/routes/owner");
 const adminRouter = require("./src/routes/admin");
 const coworkingRouter = require("./src/routes/coworkingSpace");
+const bookingRouter = require("./src/routes/booking");
 const paymentRouter = require("./src/routes/payment");
 
 dotenv.config();
@@ -43,8 +44,10 @@ app.use("/api/auth", authRouter);
 app.use("/api/tenants", verifyAuth, verifyTenant, tenantRouter);
 app.use("/api/owners", verifyAuth, verifyOwner, ownerRouter);
 app.use("/api/admin/", verifyAuth, verifyAdmin, adminRouter);
-app.use("/api/coworking-space", coworkingRouter);
-app.use("/api/payment", verifyAuth, paymentRouter);
+app.use("/api/coworking-spaces", coworkingRouter);
+app.use("/api/bookings", verifyAuth, bookingRouter);
+app.use("/api/payments", verifyAuth, paymentRouter);
+
 
 // The 404 Route
 app.get("*", function (_req, res) {
