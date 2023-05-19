@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@prisma/client": "^4.13.0",
-    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
@@ -26,7 +25,6 @@
     "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
-    "http-errors": "^2.0.0",
     "nodemon": "^2.0.22",
     "prisma": "^4.13.0"
   }
