@@ -218,7 +218,86 @@ const callbackBookingDetail = async (req, res) => {
   }
 };
 
+const getAllPrismaStatement = {
+  select: {
+    booking_id: true,
+    date: true,
+    coworking_space: {
+      select: {
+        name: true,
+      },
+    },
+    payment: {
+      select: {
+        amount: true,
+        method: true,
+        status: true,
+      },
+    },
+  },
+};
+
+const getBookingHistory = async (req, res) => {
+  try {
+    const { userId, userType } = req.user;
+    let bookings;
+
+    if (userType === "TENANT") {
+      const tenant = await prisma.tenant.findUnique({
+        where: {
+          user_id: parseInt(userId),
+        },
+      });
+
+      bookings = await prisma.booking.findMany({
+        where: {
+          tenant_id: tenant.tenant_id,
+        },
+        ...getAllPrismaStatement,
+      });
+    } else if (userType === "OWNER") {
+      const owner = await prisma.owner.findUnique({
+        where: {
+          user_id: parseInt(userId),
+        },
+      });
+
+      const coworkingSpaces = await prisma.coworkingSpace.findMany({
+        where: {
+          owner_id: owner.owner_id,
+        },
+        select: {
+          space_id: true,
+        },
+      });
+
+      bookings = await prisma.booking.findMany({
+        where: {
+          OR: coworkingSpaces.map((space) => ({
+            space_id: space.space_id,
+          })),
+        },
+        ...getAllPrismaStatement,
+      });
+    } else if (userType === "ADMIN") {
+      bookings = await prisma.booking.findMany({
+        ...getAllPrismaStatement,
+      });
+    }
+
+    if (!bookings) {
+      return res.status(404).json({ message: "Bookings not found" });
+    }
+
+    return res.status(200).json({ bookings });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   bookCoworkingSpace,
   callbackBookingDetail,
+  getBookingHistory,
 };
