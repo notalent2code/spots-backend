@@ -11,4 +11,7 @@ router.post("/:spaceId/book", verifyAuth, verifyTenant, bookingController.bookCo
 // GET /bookings/?order_id
 router.get("/", verifyTenant, bookingController.callbackBookingDetail);
 
+// GET /bookings/history
+router.get("/history", verifyAuth, bookingController.getBookingHistory);
+
 module.exports = router;
