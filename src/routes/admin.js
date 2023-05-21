@@ -12,5 +12,7 @@ router.get("/owners", adminController.getOwners);
 // PUT /admin/owners/:ownerId/verify
 router.put("/owners/:ownerId/verify", adminController.verifyOwner);
 
+// PUT /admin/coworking-space/:spaceId/verify
+router.put("/coworking-space/:spaceId/verify", adminController.verifyCoworkingSpace);
 
 module.exports = router;

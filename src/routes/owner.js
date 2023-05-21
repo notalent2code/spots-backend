@@ -4,10 +4,10 @@ const { ktpUpload } = require("../utils/uploadImage");
 
 const router = express.Router();
 
-// GET /owners/:ownerId/info
-router.get("/:ownerId/info", ownerController.getOwnerInfo);
+// GET /owners/info
+router.get("/info", ownerController.getOwnerInfo);
 
-// PUT /owners/:ownerId/info
-router.put("/:ownerId/info", ktpUpload.single('ktpURL'), ownerController.updateOwnerInfo);
+// PUT /owners/info
+router.put("/info", ktpUpload.single('ktpURL'), ownerController.updateOwnerInfo);
 
 module.exports = router;
