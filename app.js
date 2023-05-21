@@ -20,7 +20,7 @@ const coworkingRouter = require("./src/routes/coworkingSpace");
 const bookingRouter = require("./src/routes/booking");
 const paymentRouter = require("./src/routes/payment");
 
-dotenv.config();
+dotenv.config({path: __dirname + '/.env'});
 const app = express();
 
 // Middlewares
@@ -39,14 +39,14 @@ app.use(
 );
 
 // Routes
-app.use("/api/", indexRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/tenants", verifyAuth, verifyTenant, tenantRouter);
-app.use("/api/owners", verifyAuth, verifyOwner, ownerRouter);
-app.use("/api/admin/", verifyAuth, verifyAdmin, adminRouter);
-app.use("/api/coworking-spaces", coworkingRouter);
-app.use("/api/bookings", verifyAuth, bookingRouter);
-app.use("/api/payments", verifyAuth, paymentRouter);
+app.use("/", indexRouter);
+app.use("/auth", authRouter);
+app.use("/tenants", verifyAuth, verifyTenant, tenantRouter);
+app.use("/owners", verifyAuth, verifyOwner, ownerRouter);
+app.use("/admin/", verifyAuth, verifyAdmin, adminRouter);
+app.use("/coworking-spaces", coworkingRouter);
+app.use("/bookings", verifyAuth, bookingRouter);
+app.use("/payments", verifyAuth, paymentRouter);
 
 
 // The 404 Route
