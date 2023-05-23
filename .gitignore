@@ -1,3 +1,7 @@
+# Uploads
+src/uploads/**/*
+!src/uploads/avatar/default-avatar.png
+
 # Logs
 logs
 *.log

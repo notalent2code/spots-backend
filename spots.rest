@@ -1,5 +1,5 @@
 ### Register Tenant
-POST http://localhost:4000/api/auth/register
+POST http://localhost:4000/auth/register
 Content-Type: application/json
 
 {
@@ -13,7 +13,7 @@ Content-Type: application/json
 }
 
 ### Login Tenant
-POST http://localhost:4000/api/auth/login
+POST http://localhost:4000/auth/login
 Content-Type: application/json
 
 {
@@ -22,4 +22,12 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:4000/api/coworking-space
+GET http://localhost:4000/test-auth
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJUeXBlIjoiVEVOQU5UIiwiaWF0IjoxNjg0ODI5MzIxLCJleHAiOjE2ODQ4MzExMjF9.bztyRwvn3VIGPuokF_wMNrWrzN-zNcL0alaJmXmhIqU
+###
+GET http://localhost:4000/tenants
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJUeXBlIjoiVEVOQU5UIiwiaWF0IjoxNjg0ODIxMjc4LCJleHAiOjE2ODQ4MjMwNzh9.2nQAI83tYhzcg94wQoJYK3QYJh1z0a_JmBXKb0KvYso
+
+###
+DELETE http://localhost:4000/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJUeXBlIjoiVEVOQU5UIiwiaWF0IjoxNjg0ODI5OTQ3LCJleHAiOjE2ODQ4MzE3NDd9.tpUMEl_H0-GefX9W6RS7JlhU5HtxF08LnaSECHDozVc
