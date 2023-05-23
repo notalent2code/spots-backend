@@ -1,77 +1,10 @@
-// SEED IS NOT WORKING SOMEHOW IDK
+// Facilities seeder
 
 const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcrypt");
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const salt = await bcrypt.genSalt();
-
-  await prisma.user.createMany({
-    data: [
-      {
-        email: "megumi@gmail.com",
-        password_hash: await bcrypt.hash("coba12345", salt),
-        first_name: "Megumi",
-        last_name: "Kato",
-        phone_number: "081234567890",
-        user_type: "TENANT",
-        tenant: {
-          create: {
-            avatar_url:
-              "https://api.spotscoworking.live/uploads/avatar/default-avatar.png",
-          },
-        },
-      },
-      {
-        email: "marin@protonmail.com",
-        password_hash: await bcrypt.hash("coba12345", salt),
-        first_name: "Marin",
-        last_name: "Kitagawa",
-        phone_number: "081234567891",
-        user_type: "TENANT",
-        tenant: {
-          create: {
-            avatar_url:
-              "https://api.spotscoworking.live/uploads/avatar/default-avatar.png",
-          },
-        },
-      },
-      {
-        email: "chisato@gmail.com",
-        password_hash: await bcrypt.hash("coba12345", salt),
-        first_name: "Chisato",
-        last_name: "Nishikigi",
-        phone_number: "081234567892",
-        user_type: "OWNER",
-        owner: {
-          create: {
-            nik: "3272032408010021",
-            bank_name: "bca",
-            card_number: "0011223344",
-            status: "APPROVED",
-          },
-        },
-      },
-      {
-        email: "hitori@protonmail.com",
-        password_hash: await bcrypt.hash("coba12345", salt),
-        first_name: "Hitori",
-        last_name: "Gotou",
-        phone_number: "081234567893",
-        user_type: "OWNER",
-        owner: {
-          create: {
-            nik: "3272032408010022",
-            bank_name: "bni",
-            card_number: "00010000",
-            status: "APPROVED",
-          },
-        },
-      },
-    ],
-  });
 
   await prisma.facility.createMany({
     data: [
