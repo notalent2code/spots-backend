@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
@@ -71,6 +72,7 @@ model CoworkingSpace {
   owner Owner @relation(fields: [owner_id], references: [owner_id], onDelete: Cascade, onUpdate: Cascade, map: "coworking_space_ibfk_1")
 
   @@index([name], name: "name")
+  @@index([owner_id], map: "coworking_space_owner_id_index")
   @@map("coworking_space")
 }
 
@@ -81,6 +83,7 @@ model CoworkingSpaceImage {
 
   coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Cascade, map: "coworking_space_image_ibfk_1")
 
+  @@index([space_id], map: "coworking_space_image_space_id_index")
   @@map("coworking_space_image")
 }
 
@@ -113,6 +116,8 @@ model CoworkingSpaceFacility {
   coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Cascade, map: "coworking_space_facility_ibfk_1")
 
   @@id([space_id, facility_id])
+  @@index([facility_id], map: "coworking_space_facility_facility_id_index")
+  @@index([space_id], map: "coworking_space_facility_space_id_index")
   @@map("coworking_space_facility")
 }
 
@@ -126,6 +131,7 @@ model Availability {
 
   coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Cascade, map: "availability_ibfk_1")
 
+  @@index([space_id], map: "availability_space_id_index")
   @@map("availability")
 }
 
@@ -144,6 +150,8 @@ model Booking {
   coworking_space CoworkingSpace @relation(fields: [space_id], references: [space_id], onDelete: Cascade, onUpdate: Cascade, map: "booking_ibfk_1")
   tenant          Tenant         @relation(fields: [tenant_id], references: [tenant_id], onDelete: Cascade, onUpdate: Cascade, map: "booking_ibfk_2")
 
+  @@index([space_id], map: "booking_space_id_index")
+  @@index([tenant_id], map: "booking_tenant_id_index")
   @@map("booking")
 }
 
