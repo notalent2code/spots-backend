@@ -70,6 +70,7 @@ model CoworkingSpace {
 
   owner Owner @relation(fields: [owner_id], references: [owner_id], onDelete: Cascade, onUpdate: Cascade, map: "coworking_space_ibfk_1")
 
+  @@index([name], name: "name")
   @@map("coworking_space")
 }
 
