@@ -50,7 +50,11 @@ const updateTenantProfile = async (req, res) => {
     const { email, firstName, lastName, phoneNumber } = req.body;
     const avatarFileName = req.file ? req.file.filename : null;
 
-    const avatarURL = `${process.env.API_DOMAIN}/uploads/avatar/${avatarFileName}`;
+    let avatarURL; 
+
+    if (avatarFileName) {
+      avatarURL = `${process.env.API_DOMAIN}/uploads/avatar/${avatarFileName}`;
+    }
 
     let updatedTenant = await tenantProfile(req, res);
 
@@ -64,7 +68,7 @@ const updateTenantProfile = async (req, res) => {
 
     if (
       updatedTenant.avatar_url !==
-      `${process.env.API_DOMAIN}/uploads/avatar/default-avatar.png`
+      `${process.env.API_DOMAIN}/uploads/avatar/default-avatar.png` && avatarFileName
     ) {
       const oldAvatar = updatedTenant.avatar_url.split("/uploads/avatar/")[1];
       fs.unlinkSync(path.join(__dirname, `../uploads/avatar/${oldAvatar}`));
