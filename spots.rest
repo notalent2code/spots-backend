@@ -31,3 +31,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZ
 ###
 DELETE http://localhost:4000/auth/logout
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJUeXBlIjoiVEVOQU5UIiwiaWF0IjoxNjg0ODI5OTQ3LCJleHAiOjE2ODQ4MzE3NDd9.tpUMEl_H0-GefX9W6RS7JlhU5HtxF08LnaSECHDozVc
+
+###
+GET http://localhost:4000/coworking-spaces

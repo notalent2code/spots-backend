@@ -77,33 +77,91 @@ const getCoworkingSpaces = async (req, res) => {
       });
     }
 
+    const search = req.query.search;
+
+    const limit = 10;
+    let page = req.query.page ? req.query.page : 1; 
+    page = (parseInt(page) - 1) * limit;
+
     let coworkingSpaces;
 
-    if (req.user && req.user.userType === "OWNER") {
-      const owner = await prisma.owner.findUnique({
-        where: {
-          user_id: parseInt(req.user.userId),
-        },
-      });
+    if (req.query && search) {
+      if (req.user && req.user.userType === "OWNER") {
+        const owner = await prisma.owner.findUnique({
+          where: {
+            user_id: parseInt(req.user.userId),
+          },
+        });
 
-      coworkingSpaces = await prisma.coworkingSpace.findMany({
-        where: {
-          owner_id: owner.owner_id,
-        },
-        ...getAllPrismaStatement,
-      });
-    } else if (req.user && req.user.userType === "ADMIN") {
-      coworkingSpaces = await prisma.coworkingSpace.findMany({
-        ...getAllPrismaStatement,
-      });
+        coworkingSpaces = await prisma.coworkingSpace.findMany({
+          skip: page,
+          take: limit,
+          where: {
+            owner_id: owner.owner_id,
+            name: {
+              contains: search,
+            },
+          },
+          ...getAllPrismaStatement,
+        });
+      } else if (req.user && req.user.userType === "ADMIN") {
+        coworkingSpaces = await prisma.coworkingSpace.findMany({
+          skip: page,
+          take: limit,
+          where: {
+            name: {
+              contains: search,
+            },
+          },
+          ...getAllPrismaStatement,
+        });
+      } else {
+        coworkingSpaces = await prisma.coworkingSpace.findMany({
+          skip: page,
+          take: limit,
+          where: {
+            status: "APPROVED",
+            name: {
+              contains: search,
+            },
+          },
+          ...getAllPrismaStatement,
+        });
+      }
     } else {
-      coworkingSpaces = await prisma.coworkingSpace.findMany({
-        where: {
-          status: "APPROVED",
-        },
-        ...getAllPrismaStatement,
-      });
+      if (req.user && req.user.userType === "OWNER") {
+        const owner = await prisma.owner.findUnique({
+          where: {
+            user_id: parseInt(req.user.userId),
+          },
+        });
+
+        coworkingSpaces = await prisma.coworkingSpace.findMany({
+          skip: page,
+          take: limit,
+          where: {
+            owner_id: owner.owner_id,
+          },
+          ...getAllPrismaStatement,
+        });
+      } else if (req.user && req.user.userType === "ADMIN") {
+        coworkingSpaces = await prisma.coworkingSpace.findMany({
+          skip: page,
+          take: limit,
+          ...getAllPrismaStatement,
+        });
+      } else {
+        coworkingSpaces = await prisma.coworkingSpace.findMany({
+          skip: page,
+          take: limit,
+          where: {
+            status: "APPROVED",
+          },
+          ...getAllPrismaStatement,
+        });
+      }
     }
+
     if (!coworkingSpaces) {
       return res.status(404).json({ message: "Coworking spaces not found" });
     }
