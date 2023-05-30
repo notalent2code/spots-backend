@@ -58,7 +58,12 @@ const updateOwnerInfo = async (req, res) => {
     } = req.body;
 
     const ktpFileName = req.file ? req.file.filename : null;
-    const ktpURL = `${process.env.API_DOMAIN}/uploads/ktp/${ktpFileName}`;
+
+    let ktpPath;
+
+    if (ktpFileName) {
+      ktpPath = `${process.env.API_DOMAIN}/uploads/ktp/${ktpFileName}`;
+    }
 
     let updatedOwner = await ownerInfo(req, res);
 
@@ -70,9 +75,7 @@ const updateOwnerInfo = async (req, res) => {
       return res.status(404).json({ message: "Owner not found" });
     }
 
-    if (
-      updatedOwner.ktp_picture !== null && ktpFileName !== null
-    ) {
+    if (updatedOwner.ktp_picture !== null && ktpFileName !== null) {
       const oldKtp = updatedOwner.ktp_picture.split("/uploads/ktp/")[1];
       fs.unlinkSync(path.join(__dirname, `../uploads/ktp/${oldKtp}`));
     }
@@ -94,7 +97,7 @@ const updateOwnerInfo = async (req, res) => {
         owner_id: updatedOwner.owner_id,
       },
       data: {
-        ktp_picture: ktpURL || updatedOwner.ktp_picture,
+        ktp_picture: ktpPath || updatedOwner.ktp_picture,
         nik: nik || updatedOwner.nik,
         bank_name: bankName || updatedOwner.bank_name,
         card_number: cardNumber || updatedOwner.card_number,
