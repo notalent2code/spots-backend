@@ -160,7 +160,7 @@ const login = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      // secure: true, // Uncomment this line if you are using HTTPS
+      secure: true, // Uncomment this line if you are using HTTPS
     });
 
     res.status(200).json({ message: "Login success", accessToken });
