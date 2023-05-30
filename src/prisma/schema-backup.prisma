@@ -38,11 +38,11 @@ model Tenant {
 model Owner {
   owner_id         Int                       @id @default(autoincrement())
   user_id          Int                       @unique
-  nik              String?                   @db.VarChar(16)
+  nik              String?                   @unique @db.VarChar(16)
   ktp_picture      String?                   @db.VarChar(256)
   balance          Decimal                   @default(0) @db.Decimal(10, 2)
   bank_name        String?                   @db.VarChar(36)
-  card_number      String?                   @db.VarChar(20)
+  card_number      String?                   @unique @db.VarChar(20)
   status           OwnerCoworkingSpaceStatus @default(PENDING)
   coworking_spaces CoworkingSpace[]
 
