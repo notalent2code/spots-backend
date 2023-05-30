@@ -12,7 +12,6 @@ const getAllPrismaStatement = {
     capacity: true,
     status: true,
     location: true,
-    // availabilities: true,
     coworking_space_images: {
       select: {
         image_url: true,
@@ -46,7 +45,7 @@ const getByIdPrismaStatement = {
         longitude: true,
       },
     },
-    // availabilities: true,
+    availabilities: true,
     coworking_space_images: {
       select: {
         image_url: true,
