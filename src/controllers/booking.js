@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const dotenv = require("dotenv");
 const { Base64 } = require("js-base64");
-const { isValidBooking } = require("../utils/bookingValidator");
+const { isValidBooking, convertDateToUnix } = require("../utils/bookingValidator");
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -14,6 +14,13 @@ const bookCoworkingSpace = async (req, res) => {
     startHour = parseInt(startHour);
     endHour = parseInt(endHour);
     totalPrice = parseInt(totalPrice);
+
+    const newDateUnix = convertDateToUnix(date);
+    const currentDateUnix = parseInt(Date.now() / 1000);
+
+    if (newDateUnix < currentDateUnix) {
+      return res.status(400).json({ message: "Invalid booking date" });
+    }
 
     const tenant = await prisma.tenant.findUnique({
       where: {

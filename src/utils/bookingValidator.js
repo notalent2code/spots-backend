@@ -53,4 +53,5 @@ function isValidBooking(newDate, newStartHour, newEndHour, bookedDates) {
 
 module.exports = {
   isValidBooking,
+  convertDateToUnix,
 };
