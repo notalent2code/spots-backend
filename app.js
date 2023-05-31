@@ -33,7 +33,7 @@ app.use('/uploads', express.static(path.join(__dirname, "./src/uploads")));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.WEB_DOMAIN,
+    origin: "*",
     credentials: true,
   })
 );
