@@ -163,7 +163,7 @@ const login = async (req, res) => {
       secure: true, // Uncomment this line if you are using HTTPS
     });
 
-    res.status(200).json({ message: "Login success", accessToken });
+    res.status(200).json({ message: "Login success", userId, userType, accessToken });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
