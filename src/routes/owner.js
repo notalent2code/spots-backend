@@ -10,4 +10,7 @@ router.get("/info", ownerController.getOwnerInfo);
 // PUT /owners/info
 router.put("/info", ktpUpload.single('ktpURL'), ownerController.updateOwnerInfo);
 
+// GET /owners/facilities
+router.get("/facilities", ownerController.getCoworkingFacilities);
+
 module.exports = router;

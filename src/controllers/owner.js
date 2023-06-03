@@ -118,7 +118,19 @@ const updateOwnerInfo = async (req, res) => {
   }
 };
 
+const getCoworkingFacilities = async (req, res) => {
+  try {
+    const facilities = await prisma.facility.findMany();
+
+    res.status(200).json({ facilities });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
   getOwnerInfo,
   updateOwnerInfo,
+  getCoworkingFacilities,
 };
