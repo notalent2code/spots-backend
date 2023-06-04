@@ -242,6 +242,9 @@ const getAllPrismaStatement = {
       },
     },
   },
+  orderBy: {
+    date: "desc",
+  }
 };
 
 const getBookingHistory = async (req, res) => {
