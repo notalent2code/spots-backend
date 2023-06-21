@@ -103,6 +103,7 @@ model Facility {
   facility_id Int    @id @default(autoincrement())
   name        String @unique @db.VarChar(64)
   description String @db.Text
+  icon        String? @db.VarChar(36)
 
   coworking_space_facilities CoworkingSpaceFacility[]
 
